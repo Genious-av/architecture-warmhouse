@@ -1,0 +1,38 @@
+@startuml
+title Warmhouse Device Management Code Diagram
+
+top to bottom direction
+
+!includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/master/C4_Component.puml
+
+class Device {
+  +String name
+  +String model
+  +String type
+  +Protocol protocol
+  +Boolean isActive
+  +List<Function> functions
+  +Date registerDate
+  +void addDevice()
+  +void activateDevice()
+  +void deactivateDevice()
+  +void deleteDevice()
+}
+
+class Protocol {
+  +String type
+  +String version
+  +void addProtocol()
+  +void updateProtocol()
+}
+
+class Function {
+   +Command command
+   +String api
+   +void run()
+}
+
+
+Device "1" -- "0..*" Protocol : has
+Device "1" -- "0..*" Function : has
+@enduml

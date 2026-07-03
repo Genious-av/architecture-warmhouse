@@ -1,0 +1,18 @@
+@startuml
+title Warmhouse Context Diagram
+
+top to bottom direction
+!include C4_Context.puml
+
+Person(user, "User", "A user of Warmhouse system")
+Person(admin, "Administrator", "An administrator managing the system")
+System(Warmhouse, "WarmhouseSystem", "System managing sensors")
+
+System_Ext(sensors, "Sensors", "Sensors to integrate with")
+System_Ext(banking, "Banking System", "Banking system api for subscription payments")
+
+Rel(user, Warmhouse, "Uses the system")
+Rel(admin,Warmhouse,"Manages the system")
+Rel(Warmhouse,sensors,"Fetches sensor data")
+Rel(Warmhouse,banking,"Process payments")
+@enduml

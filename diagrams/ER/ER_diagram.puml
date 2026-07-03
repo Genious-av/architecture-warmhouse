@@ -1,0 +1,99 @@
+@startuml
+hide circle
+
+entity "Пользователь" as user {
+*id: uuid
+---
+name: varchar
+email: varchar
+phone: varchar
+house_id: uuid
+module_id: uuid
+}
+
+entity "Дом" as house {
+*id: uuid
+---
+address: varchar
+city: varchar
+scenario_id: uuid
+}
+
+entity "Сценарий" as scenario {
+*id: uuid
+---
+commandsId: uuid
+status: varchar
+date: next_run
+}
+
+entity "Команда" as command {
+*id: uuid
+---
+api: varchar
+type: varchar
+}
+
+entity "Подписка" as subscription {
+*id: uuid
+---
+type: varchar
+date_start: date
+date_end: date
+cost: int4
+}
+
+entity "Устройство" as device {
+*id: uuid
+---
+type_id: uuid
+serial_number: varchar
+house_id: uuid
+status: varchar
+date_registration: date
+location: string
+}
+
+entity "Тип устройства" as device_type {
+*id: uuid
+---
+name: varchar
+type: varchar
+version: varchar
+}
+
+entity "Протокол устройства" as device_protocol {
+*id: uuid
+---
+name: varchar
+type: varchar
+version: varchar
+}
+
+entity "Модуль" as module {
+*id: uuid
+---
+name: varchar
+device_id: uuid
+}
+
+entity "Телеметрия" as device_data {
+*id: uuid
+---
+device_id: uuid
+data: jsonb
+date: date
+}
+
+' Связи
+user ||--o{ house
+house ||--o{ device
+module ||--o{ device
+house ||--o{ module
+house ||--o{ scenario
+scenario ||--|| command
+device ||--|| device_type
+device_type ||--o{ device_protocol
+device_protocol ||--o{ command
+device ||--o{ device_data
+@enduml
