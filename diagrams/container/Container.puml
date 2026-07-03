@@ -1,0 +1,39 @@
+@startuml
+title Warmhouse Container Diagram
+
+top to bottom direction
+
+!include C4_Container.puml
+
+Person(user, "User", "A user of the smart home system")
+Person(admin, "Administrator", "An administrator managing the smart home system")
+System(Warmhouse, "Warmhouse System", "System managing sensors")
+
+Container_Boundary(Warmhouse, "Warmhouse System") {
+  Container(UI, "UI Application", "Handles user interactions")
+  Container(gateway, "Gateway service", "Handles user requests")
+  Container(PaymentService, "Payment Service", "Processes payments")
+  Container(Database, "Database", "Stores user data, sensor data and subscriprtion data")
+  Container(SensorManagementSystem, "Sensor Management System", "Handles sensor api")
+  Container(QueueSensorDataService, "Queue Sensor Data Service", "Processes sensor data")
+  Container(UserManagementSystem, "User Management System", "Handles user services")
+}
+
+System_Ext(SensorsApi, "Sensors API", "External API for sensors data integration")
+System_Ext(payment, "Payment System", "External bank for processing payments")
+
+Rel(user, UI, "Uses the system")
+Rel(admin, UI,"Manages the system")
+Rel(gateway,PaymentService,"Processes payment requests")
+Rel(UI,gateway,"Processes ui requests")
+Rel(PaymentService,payment,"Processes payments")
+Rel(gateway,UserManagementSystem,"Reads/Writes user data")
+Rel(gateway,SensorManagementSystem,"Manages sensors data")
+Rel(SensorManagementSystem,SensorsApi,"Send sensors commands")
+Rel(SensorsApi,QueueSensorDataService,"Receives sensors data")
+Rel(SensorManagementSystem,Database,"Stores sensors data")
+Rel(QueueSensorDataService,SensorManagementSystem,"Stores sensors data")
+Rel(UserManagementSystem,Database,"Stores users data")
+Rel(PaymentService,Database,"Stores subscription data")
+
+@enduml

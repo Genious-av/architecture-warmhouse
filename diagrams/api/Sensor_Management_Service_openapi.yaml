@@ -1,0 +1,305 @@
+openapi: 3.0.3
+info:
+  title: Sensor management service API
+  version: 1.0.0
+
+tags:
+  - name: DeviceController
+    description: Device lifecycle management and status operations.
+  - name: DeviceTypeController
+    description: Device type catalog management.
+  - name: TelemetryController
+    description: Device telemetry ingestion and querying.
+  - name: RelationController
+    description: Entity relationship management.
+
+paths:
+
+  /devices:
+    post:
+      tags: [DeviceController]
+      summary: Register device
+      description: Registers a new device in the system.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [typeId, serialNumber, houseId, status]
+              properties:
+                typeId: { type: string, format: uuid }
+                serialNumber: { type: string }
+                houseId: { type: string, format: uuid }
+                status: { type: string }
+                location: { type: string }
+                dateRegistration: { type: string, format: date }
+      responses:
+        "201":
+          description: Device created
+        "204":
+          description: House deleted
+        "400":
+          description: Invalid request
+        "401":
+          description: Unauthorized  
+        "404":
+          description: Not found
+        "403":
+          description: Forbidden
+        "500":
+          description: Internal error  
+
+  /devices/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+
+    get:
+      tags: [DeviceController]
+      summary: Get device by ID
+      description: Returns device details.
+      responses:
+        "200":
+          description: Device found
+        "204":
+          description: House deleted
+        "400":
+          description: Invalid request
+        "401":
+          description: Unauthorized  
+        "404":
+          description: Not found
+        "403":
+          description: Forbidden
+        "500":
+          description: Internal error  
+    put:
+      tags: [DeviceController]
+      summary: Update device
+      description: Updates device status or assignment.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status: { type: string }
+                houseId: { type: string, format: uuid }
+      responses:
+        "200":
+          description: Device updated
+        "204":
+          description: House deleted
+        "400":
+          description: Invalid request
+        "401":
+          description: Unauthorized  
+        "404":
+          description: Not found
+        "403":
+          description: Forbidden
+        "500":
+          description: Internal error  
+          
+    delete:
+      tags: [DeviceController]
+      summary: Delete device
+      description: Removes a device.
+      responses:
+        "204":
+          description: Device deleted
+        "400":
+          description: Invalid request
+        "401":
+          description: Unauthorized  
+        "404":
+          description: Not found
+        "403":
+          description: Forbidden
+        "500":
+          description: Internal error  
+
+
+  /device-types:
+    post:
+      tags: [DeviceTypeController]
+      summary: Create device type
+      description: Adds a new device type to catalog.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, type]
+              properties:
+                name: { type: string }
+                type: { type: string }
+                version: { type: string }
+      responses:
+        "201":
+          description: Device type created
+
+    get:
+      tags: [DeviceTypeController]
+      summary: Get all device types
+      responses:
+        "200":
+          description: List retrieved
+
+  /device-types/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+
+    get:
+      tags: [DeviceTypeController]
+      summary: Get device type by ID
+      responses:
+        "200":
+          description: Device type found
+
+    put:
+      tags: [DeviceTypeController]
+      summary: Update device type
+      responses:
+        "200":
+          description: Device type updated
+
+    delete:
+      tags: [DeviceTypeController]
+      summary: Delete device type
+      responses:
+        "204":
+          description: Device type deleted
+
+  /devices/{deviceId}/telemetry:
+    get:
+      tags: [TelemetryController]
+      summary: Get telemetry by device
+      description: Returns telemetry history for a device.
+      parameters:
+        - name: deviceId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Telemetry retrieved
+        "400":
+          description: Invalid request
+        "401":
+          description: Unauthorized  
+        "404":
+          description: Not found
+        "403":
+          description: Forbidden
+        "500":
+          description: Internal error
+
+  /modules/{deviceId}/devices/{moduleId}:
+    post:
+      tags: [RelationController]
+      summary: Assign device to module
+      description: Links a device with a module.
+      parameters:
+        - name: deviceId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: moduleId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Relation created
+        "400":
+          description: Invalid request
+        "401":
+          description: Unauthorized  
+        "404":
+          description: Not found
+        "403":
+          description: Forbidden
+        "500":
+          description: Internal error    
+
+  /modules/{moduleId}/devices/{deviceId}:
+    post:
+      tags: [RelationController]
+      summary: Assign device to module
+      description: Links a device to a module.
+      parameters:
+        - name: moduleId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: deviceId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Relation created
+        "400":
+          description: Invalid request
+        "401":
+          description: Unauthorized  
+        "404":
+          description: Not found
+        "403":
+          description: Forbidden
+        "500":
+          description: Internal error        
+  /devices/{deviceId}/deviceType/{deviceTypeId}:
+    post:
+      tags: [RelationController]
+      summary: Assign device to deviceType
+      description: Links a device to a deviceType.
+      parameters:
+        - name: deviceId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: deviceTypeId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Relation created
+        "400":
+          description: Invalid request
+        "401":
+          description: Unauthorized  
+        "404":
+          description: Not found
+        "403":
+          description: Forbidden
+        "500":
+          description: Internal error             
